@@ -1,6 +1,5 @@
 ---
-title: "CodeRLadies - dplyr Introduction"
-subtitle: "Working with Data"
+title: "CodeRLadies - Parallel computing and dplyr introduction"
 author: "Toryn Schafer"
 date: "05/26/2020"
 output: 
@@ -12,6 +11,9 @@ output:
 knitr::opts_chunk$set(echo = TRUE,fig.height = 4,fig.width = 5, message=F)
 
 library(dplyr)
+library(doParallel)
+library(doRNG)
+library(foreach)
 library(tidyr)
 library(knitr)
 
@@ -19,8 +21,82 @@ df_wide <- data.frame(row = LETTERS[1:3], a = 1:3, b = 4:6, c = 7:9)
 df_long <- gather(df_wide, key = key, value = value, -row)
 ```
 
+## Parallel Computing
 
-## Today's Topics:
+- Useful for any task that must be repeated many times.
+- Most computations done in a for loop may be parallelized  
+    + unless current computation depends on past computations
+- To use parallel computing locally in R, we must register a cluster
+
+```{r register}
+detectCores()
+
+ncores <- 2
+registerDoParallel(ncores)
+
+```
+
+## For each
+
+The easiest way to parallelize a for loop in R is with the foreach package.
+
+```{r eval=F}
+x <- foreach(i = 1:n.cores) %dopar% {
+  rnorm(n.draw)
+}
+```
+
+## Serial Computing
+
+```{r serial}
+ndraw <- 1000
+set.seed(2342)
+
+x <- list()
+for(i in 1:ncores){
+  x[[i]] <- rnorm(ndraw)
+}
+mean1 <- sapply(x,mean)
+
+set.seed(2342)
+
+x <- foreach(i = 1:ncores) %do% {
+  rnorm(ndraw)
+}
+mean2 <- sapply(x,mean)
+
+cbind(mean1,mean2)
+```
+    
+## Parallel Computing
+
+Using seeds for reproducibility is not sent to each registered core with dopar and must use dorng.
+
+```{r foreach}
+set.seed(2342)
+x <- foreach(i = 1:ncores) %dopar% {
+  rnorm(ndraw)
+}
+
+mean3 <- sapply(x,mean)
+
+set.seed(2342)
+x <- foreach(i = 1:ncores) %dorng% {
+  rnorm(ndraw)
+}
+
+mean4 <- sapply(x,mean)
+
+cbind(mean1,mean2,mean3,mean4)
+```
+
+## Stop your cluster
+
+```{r stop}
+stopImplicitCluster()
+```
+
+## Dplyr Topics:
 <style type="text/css">
 pre {
   font-size: 14px
