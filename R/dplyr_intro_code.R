@@ -2,7 +2,7 @@
 # navigate to cheatsheet for dplyr by 
 # Help > Cheatsheets > Data Transformation with dplyr
 
-install.packages(c("dplyr","lubridate","readr","tidyr"))
+#install.packages(c("dplyr","lubridate","readr","tidyr"))
 library(dplyr)        # functions for manipulated variables in a dataframe
 library(lubridate)    # contains functions for handling date/time data
 library(readr)        # efficient functions for reading and writing data
@@ -30,7 +30,7 @@ df_long %>%
   pivot_wider(row, names_from = lowercase, values_from = numbers)
 
 #### Read in datasets ####
-purchase <- read_csv("Data/approved_data_purchase-v5.csv",na = c("", "NA","NULL")) # NULL is not a default NA character string
+purchase <- read_csv("Data/approved_data_purchase_v5.csv",na = c("", "NA","NULL")) # NULL is not a default NA character string
 zipcodes <- read_csv("Data/zipcodes.csv")
 
 #### Explore variables in Purchase ####
@@ -111,5 +111,5 @@ purchase_state <- purchase_state %>%
 
 
 #### Save the data ####
-write_csv(purchase_latlong,path="purchase_latlong.csv")
-write_csv(purchase_state,path="purchase_state.csv")
+#write_csv(purchase_latlong,path="purchase_latlong.csv")
+#write_csv(purchase_state,path="purchase_state.csv")
